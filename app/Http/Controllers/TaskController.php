@@ -19,7 +19,8 @@ class TaskController extends Controller
     {
         $task = Task::getTopPriorityTask();
 
-        if(!$task){
+        // TODO: fix array_has with proper parsing
+        if(!$task || !isset($task[0])){
             return $this->formatErrorResponse('There are no tasks to be executed.', 404);
         }
 
@@ -38,7 +39,6 @@ class TaskController extends Controller
         if(Cache::get($id)){
             return response()->json(['status' => 'executing'], 200);
         }
-
 
         // Query the Task from the database by id
         $task = Task::find($id);

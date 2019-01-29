@@ -41,7 +41,7 @@ class Task extends Model
                     ->take(1)
                     ->get();
 
-        return $results[0];
+        return $results;
     }
 
     //TODO: move average execution time logic here
