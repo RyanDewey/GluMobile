@@ -109,11 +109,11 @@ class TaskController extends Controller
         // Query the Task from the database by id
         $task = Task::find($id);
 
-
         if(!$task) {
             return $this->formatErrorResponse('Task does not exist.', 404);
         }
 
+        // Either it's not the processor who started the task, or not processor not assigned
         if(!is_null($task->processor_id) && $task->processor_id != $processor_id) {
             return $this->formatErrorResponse('User not authorized to update this task.', 400);
         }
