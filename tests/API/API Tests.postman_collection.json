@@ -1,0 +1,671 @@
+{
+	"info": {
+		"_postman_id": "bf0649af-1e42-433c-9657-0f55b82840d0",
+		"name": "API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getTopTask - no queued tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 404\"] = responseCode.code === 404;",
+							"pm.test(\"check error\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error.message).to.eql(\"There are no tasks to be executed.\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTaskStatus - task does not exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 404\"] = responseCode.code === 404;",
+							"pm.test(\"Corrent Error Message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error.message).to.eql(\"Task does not exist.\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/99999999999",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"99999999999"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAverageExecutionTime - not calculated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"// var data = JSON.parse(responseBody).data;",
+							"// var user = data[0];",
+							"",
+							"// tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"// //tests[\"Response time is acceptable\"] = responseTime < 200; // milliseconds",
+							"// tests[\"Content-Type header is set\"] = postman.getResponseHeader(\"Content-Type\");",
+							"// tests[\"user\"] = user.name === 'Ryan Dewey';",
+							"// //and so on...",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task-stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task-stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createTask - success - initial",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "24f3404d-f7bd-48ee-861b-e3baed0f32e3",
+						"exec": [
+							"tests[\"Status code is 201\"] = responseCode.code === 201;",
+							"pm.test(\"valid data\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    //check each individual field",
+							"    postman.setEnvironmentVariable(\"test_task\", jsonData.data.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"submitter_id\":4,\"command\":\"...\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createTask - bad validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb5f0a7d-6719-4558-b5da-4b8b67a2907f",
+						"exec": [
+							"tests[\"Status code is 422\"] = responseCode.code === 422;",
+							"pm.test(\"valid data\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.command[0]).to.eql(\"The command field is required.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"submitter_id\":4}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTopTask - queued tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"var taskid = pm.variables.get(\"test_task\")",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"pm.test(\"check top task\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data[0].id).to.eql(parseInt(taskid));",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTaskStatus - task exists - queued",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"pm.test(\"Status == queued\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"queued\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateTask - set to executing - success",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Processor-Id",
+						"value": "3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status\":\"executing\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateTask - task executing",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Processor-Id",
+						"value": "3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status\":\"executing\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTaskStatus - task exists - executing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"pm.test(\"Status == executing\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"executing\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateTask - wrong Processor-Id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Processor-Id",
+						"value": "99",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status\":\"completed\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateTask - set to complete - success",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Processor-Id",
+						"value": "3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status\":\"completed\"}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTaskStatus - task exists - completed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"pm.test(\"Status == completed\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"completed\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task/{{test_task}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task",
+						"{{test_task}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAverageExecutionTime - calculated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "190f2b9b-496b-4674-a062-930ef0766326",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"pm.test(\"Status == completed\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    //need to structure the response better",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/task-stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"task-stats"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
